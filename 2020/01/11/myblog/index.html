@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>vue开发中常用的组件通信方式 | 个人博客</title>
+    <meta name="description" content="This is a blog example built by VuePress">
+    
+    
+    <link rel="preload" href="/myblog/assets/css/0.styles.c75d53ba.css" as="style"><link rel="preload" href="/myblog/assets/js/app.573e699b.js" as="script"><link rel="preload" href="/myblog/assets/js/4.c6efbfb2.js" as="script"><link rel="preload" href="/myblog/assets/js/5.d6b1a219.js" as="script"><link rel="preload" href="/myblog/assets/js/16.5a12aab3.js" as="script"><link rel="prefetch" href="/myblog/assets/js/1.ad2e667e.js"><link rel="prefetch" href="/myblog/assets/js/10.4219b562.js"><link rel="prefetch" href="/myblog/assets/js/11.10164942.js"><link rel="prefetch" href="/myblog/assets/js/12.e77bc74c.js"><link rel="prefetch" href="/myblog/assets/js/13.058952a4.js"><link rel="prefetch" href="/myblog/assets/js/14.5a0c5f2d.js"><link rel="prefetch" href="/myblog/assets/js/15.1a76e7fb.js"><link rel="prefetch" href="/myblog/assets/js/17.3c33151a.js"><link rel="prefetch" href="/myblog/assets/js/6.9769c1ff.js"><link rel="prefetch" href="/myblog/assets/js/7.946ec429.js"><link rel="prefetch" href="/myblog/assets/js/8.6bacb03f.js"><link rel="prefetch" href="/myblog/assets/js/9.d0aed92e.js"><link rel="prefetch" href="/myblog/assets/js/vuejs-paginate.fcd15b27.js">
+    <link rel="stylesheet" href="/myblog/assets/css/0.styles.c75d53ba.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="vuepress-theme-blog__global-layout"><section id="header-wrapper"><header id="header"><div class="header-wrapper"><div class="title"><a href="/myblog/" class="nav-link home-link">个人博客 </a></div> <div class="header-right-wrap"><ul class="nav"><li class="nav-item"><a href="/myblog/" class="nav-link">Blog</a></li><li class="nav-item"><a href="/myblog/tag/" class="nav-link">Tags</a></li></ul> <div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div></div></div></header></section> <div id="mobile-header"><div class="mobile-header-bar"><div class="mobile-header-title"><a href="/myblog/" class="nav-link mobile-home-link">个人博客 </a> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div> <div class="mobile-menu-wrapper"><hr class="menu-divider"> <ul class="mobile-nav"><li class="mobile-nav-item"><a href="/myblog/" class="nav-link">Blog</a></li><li class="mobile-nav-item"><a href="/myblog/tag/" class="nav-link">Tags</a></li></ul></div></div></div> <div class="content-wrapper"><div id="vuepress-theme-blog__post-layout"><div class="vuepress-blog-theme-content"><div class="content__default"><h1 id="vue开发中常用的组件通信方式"><a href="#vue开发中常用的组件通信方式" class="header-anchor">#</a> vue开发中常用的组件通信方式</h1> <p>个人总结的在vue项目开发中常用的几种组件通信方式</p> <h2 id="props-和-emit"><a href="#props-和-emit" class="header-anchor">#</a> props 和$emit</h2> <p>父组件绑定自定义属性和事件</p> <div class="language-html extra-class"><pre class="language-html"><code><span class="token comment">&lt;!-- 父组件 --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Child</span> <span class="token attr-name">:str</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>str<span class="token punctuation">&quot;</span></span> <span class="token attr-name">@change</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>change<span class="token punctuation">&quot;</span></span> <span class="token punctuation">/&gt;</span></span>
+</code></pre></div><p>子组件用 props 属性接收属性，props 可以是数组或者对象</p> <div class="language-js extra-class"><pre class="language-js"><code>    props<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'str'</span><span class="token punctuation">]</span>
+
+    <span class="token comment">//或者</span>
+    props<span class="token operator">:</span> <span class="token punctuation">{</span>
+        str<span class="token operator">:</span><span class="token punctuation">{</span>
+            type<span class="token operator">:</span>String<span class="token punctuation">,</span> <span class="token comment">//传入值限定类型</span>
+            <span class="token comment">// type 值可为String,Number,Boolean,Array,Object,Date,Function,Symbol</span>
+            <span class="token comment">// type 还可以是一个自定义的构造函数，并且通过 instanceof 来进行检查确认</span>
+            required<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">//是否必传</span>
+            <span class="token keyword">default</span><span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span>  <span class="token comment">//默认值,对象或数组默认值必须从一个工厂函数获取如 default:()=&gt;[]</span>
+            validator<span class="token operator">:</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token comment">// 这个值必须匹配下列字符串中的一个</span>
+                <span class="token keyword">return</span> <span class="token punctuation">[</span><span class="token string">'add'</span><span class="token punctuation">,</span> <span class="token string">'edit'</span><span class="token punctuation">,</span> <span class="token string">'del'</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">indexOf</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token operator">!==</span> <span class="token operator">-</span><span class="token number">1</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>绑定的自定义事件可以用$emit触发</p> <div class="language-js extra-class"><pre class="language-js"><code>    methods<span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token function">toParent</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">'change'</span><span class="token punctuation">,</span>data<span class="token punctuation">)</span>
+            <span class="token comment">// 触发父组件方法并传递参数</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><h2 id="attrs和-listeners"><a href="#attrs和-listeners" class="header-anchor">#</a> $attrs和$listeners</h2> <p>$attrs场景：获取未在子组件props中接收的属性</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">// 父组件</span>
+    <span class="token operator">&lt;</span>Child text<span class="token operator">=</span><span class="token string">&quot;文本&quot;</span> <span class="token operator">:</span>imgUrl<span class="token operator">=</span><span class="token string">&quot;imgUrl&quot;</span><span class="token operator">/</span><span class="token operator">&gt;</span>
+    <span class="token comment">// 子组件</span>
+    <span class="token function">mounted</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>$attrs<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>$attrs场景：也可以用于向子组件内部组件传递参数</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">// 父组件</span>
+    <span class="token operator">&lt;</span>Child text<span class="token operator">=</span><span class="token string">&quot;文本&quot;</span> <span class="token operator">:</span>imgUrl<span class="token operator">=</span><span class="token string">&quot;imgUrl&quot;</span><span class="token operator">/</span><span class="token operator">&gt;</span>
+    <span class="token comment">// 子组件</span>
+    <span class="token operator">&lt;</span>Inner v<span class="token operator">-</span>bind<span class="token operator">=</span><span class="token string">&quot;$attrs&quot;</span><span class="token operator">/</span><span class="token operator">&gt;</span>
+</code></pre></div><p>$listeners场景：父组件的自定义事件传递给子孙组件</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">// 父组件</span>
+    <span class="token operator">&lt;</span>Child @submitData<span class="token operator">=</span><span class="token string">&quot;submit&quot;</span><span class="token operator">/</span><span class="token operator">&gt;</span>
+    <span class="token comment">// 子组件</span>
+    <span class="token operator">&lt;</span>Inner v<span class="token operator">-</span>on<span class="token operator">=</span><span class="token string">&quot;$listeners&quot;</span><span class="token operator">/</span><span class="token operator">&gt;</span>
+</code></pre></div><h2 id="provide和inject"><a href="#provide和inject" class="header-anchor">#</a> provide和inject</h2> <p>主要用于深层嵌套组件通信</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">//父组件:</span>
+provide<span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token comment">//provide 是一个对象,提供一个属性或方法</span>
+  foo<span class="token operator">:</span> <span class="token string">'这是 foo'</span><span class="token punctuation">,</span>
+  <span class="token function-variable function">fooMethod</span><span class="token operator">:</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'父组件 fooMethod 被调用'</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+<span class="token comment">// 子或者孙子组件</span>
+inject<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'foo'</span><span class="token punctuation">,</span><span class="token string">'fooMethod'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">//数组或者对象,注入到子组件</span>
+<span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">fooMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>foo<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+<span class="token comment">//在父组件下面所有的子组件都可以利用inject</span>
+</code></pre></div><h2 id="parent和children"><a href="#parent和children" class="header-anchor">#</a> parent和children</h2> <p>$parent:直接父组件实例，$children:直接子组件实例</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">//父组件</span>
+<span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>$children<span class="token punctuation">)</span> 
+  <span class="token comment">//可以拿到 一级子组件的属性和方法</span>
+  <span class="token comment">//所以就可以直接改变 data,或者调用 methods 方法</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">//子组件</span>
+<span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>$parent<span class="token punctuation">)</span> <span class="token comment">//可以拿到 parent 的属性和方法</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="refs"><a href="#refs" class="header-anchor">#</a> $refs</h2> <p>组件标签添加ref属性可以通过$refs拿到该组件的实例</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">// 父组件</span>
+<span class="token operator">&lt;</span>home ref<span class="token operator">=</span><span class="token string">&quot;home&quot;</span><span class="token operator">/</span><span class="token operator">&gt;</span>
+
+<span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>home<span class="token punctuation">)</span> <span class="token comment">//即可拿到子组件的实例,就可以直接操作 data 和 methods</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="v-slot-作用域插槽"><a href="#v-slot-作用域插槽" class="header-anchor">#</a> v-slot 作用域插槽</h2> <p>子组件内数据可以被父页面拿到</p> <div class="language-js extra-class"><pre class="language-js"><code>    <span class="token comment">// 父组件</span>
+    <span class="token operator">&lt;</span>child<span class="token operator">&gt;</span>
+        <span class="token operator">&lt;</span>template v<span class="token operator">-</span>slot<span class="token operator">:</span>demo<span class="token operator">=</span><span class="token string">&quot;{user}&quot;</span><span class="token operator">&gt;</span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>template<span class="token operator">&gt;</span>
+    <span class="token operator">&lt;</span><span class="token operator">/</span>child<span class="token operator">&gt;</span>
+    <span class="token comment">//子组件</span>
+    <span class="token operator">&lt;</span>slot name<span class="token operator">=</span><span class="token string">&quot;demo&quot;</span> <span class="token operator">:</span>user<span class="token operator">=</span><span class="token string">&quot;user&quot;</span><span class="token operator">&gt;</span><span class="token operator">&lt;</span><span class="token operator">/</span>slot<span class="token operator">&gt;</span>
+</code></pre></div></div> <!----> <hr> <!----></div> <div class="sticker vuepress-toc"><div class="vuepress-toc-item vuepress-toc-h2 active"><a href="#props-和-emit" title="props 和\$emit">props 和\$emit</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#attrs和-listeners" title="$attrs和$listeners">$attrs和$listeners</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#provide和inject" title="provide和inject">provide和inject</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#parent和children" title="parent和children">parent和children</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#refs" title="$refs">$refs</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#v-slot-作用域插槽" title="v-slot 作用域插槽">v-slot 作用域插槽</a></div></div></div></div> <footer class="footer" data-v-10a1203e><div class="footer-left-wrap" data-v-10a1203e><ul class="contact" data-v-10a1203e><li class="contact-item" data-v-10a1203e><a href="https://github.com/ulivz" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-10a1203e><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github" data-v-10a1203e><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" data-v-10a1203e></path></svg>
+          
+        </a></li><li class="contact-item" data-v-10a1203e><a href="https://twitter.com/_ulivz" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-10a1203e><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter" data-v-10a1203e><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" data-v-10a1203e></path></svg>
+          
+        </a></li></ul></div> <div class="footer-right-wrap" data-v-10a1203e><ul class="copyright" data-v-10a1203e><li class="copyright-item" data-v-10a1203e><a href="https://policies.google.com/privacy?hl=en-US" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-10a1203e>Privacy Policy</a></li><li class="copyright-item" data-v-10a1203e><a href="/myblog/2020/01/11/myblog/.html" class="nav-link" data-v-10a1203e>MIT Licensed | Copyright © 2018-present Vue.js</a></li></ul></div></footer></div><div class="global-ui"></div></div>
+    <script src="/myblog/assets/js/app.573e699b.js" defer></script><script src="/myblog/assets/js/4.c6efbfb2.js" defer></script><script src="/myblog/assets/js/5.d6b1a219.js" defer></script><script src="/myblog/assets/js/16.5a12aab3.js" defer></script>
+  </body>
+</html>
